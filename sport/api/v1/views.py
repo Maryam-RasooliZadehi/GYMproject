@@ -51,5 +51,22 @@ class DietAPIView(generics.GenericAPIView):
         serializer = self.get_serializer(data = request.data)
         serializer.is_valid(raise_exception = True)
         serializer.save()
-        return Response ({"message":"new Diet created succesfully."})
+        return Response ({"message":"new Diet created successfully."})
+    
+
+class UpdateDietAPIView(generics.GenericAPIView):
+
+    class_serializer = UpdateDietSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        queryset = Diet.objects.filter(course__teacher = self.request.user)
+        return queryset
+    
+    def put(self , request , id):
+        diet = self.get_object()
+        serializer = self.get_serializer(instance = diet , data= request.data)
+        serializer.save()
+        return Response({"message":"Diet updated successfully."})
     
