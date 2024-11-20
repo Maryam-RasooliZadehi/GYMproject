@@ -28,18 +28,17 @@ class CourseAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(queryset , many=True)
         return Response(serializer.data)
     
-class ActionListAPIView(generics.GenericAPIView):
-
-    class_serializer = ActionSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = Action.objects,all()
+class ActionListAPIView(generics.ListAPIView):
+    serializer_class = ActionSerializer
+    pagination_class = ListPagination
+    queryset = Action.objects.all()
 
 class DietAPIView(generics.GenericAPIView):
 
     class_serializer = DietSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = (DjangoFilterBackend,)
-    filterset_calss = DietFilter
+    filterset_class = DietFilter
 
     def get(self , request):
         query = Q(teacher = request.user.id) | Q(student = request.user.id)
