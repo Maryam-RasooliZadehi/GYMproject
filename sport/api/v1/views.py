@@ -27,3 +27,10 @@ class CourseAPIView(generics.GenericAPIView):
         queryset = Course.objects,filter(query)
         serializer = self.serializer_class(queryset , many=True)
         return Response(serializer.data)
+    
+class ActionListAPIView(generics.GenericAPIView):
+
+    class_serializer = ActionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Action.objects,all()
+
