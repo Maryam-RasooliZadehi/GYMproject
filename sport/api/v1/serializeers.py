@@ -18,9 +18,19 @@ class ActionSerializer(serializers.ModelSerializer):
 class DietSerializer(serializers.ModelSerializer):
     class Meta:
         exclude = ["created_date", "updated_date"]
-    #cheecks to see if the user who requests to make a diet is the teacher of the course or not.
+    #checks to see if the user who requests to make a diet is the teacher of the course or not.
     def validate(self, attrs):
         course = attrs.get('course')
         if course.teacher != self.context['request'].user:
             raise serializers.ValidationError({"detail":"you are noit the teacher of this course."})
+        return super().validate(attrs)
+    
+class UpdateDietSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diet
+        fields = ["start_date","end_date","description"]
+
+    def validate(self, attrs):
+        if self.isinstance.course.teacher != self.context["request"].user:
+            raise serializers.ValidationError({"detail":"you are not the teacher of the course to edit this diet."})
         return super().validate(attrs)
