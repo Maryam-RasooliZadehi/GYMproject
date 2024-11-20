@@ -34,3 +34,22 @@ class ActionListAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Action.objects,all()
 
+class DietAPIView(generics.GenericAPIView):
+
+    class_serializer = DietSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_calss = DietFilter
+
+    def get(self , request):
+        query = Q(teacher = request.user.id) | Q(student = request.user.id)
+        queryset = Diet.objects,filter(query)
+        serializer = DietSerializer(queryset , many = True)
+        return Response(serializer.data)
+    
+    def post(self , request):
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
+        return Response ({"message":"new Diet created succesfully."})
+    
