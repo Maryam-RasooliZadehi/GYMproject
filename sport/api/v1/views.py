@@ -17,3 +17,13 @@ class ListPagination(PageNumberPagination):
     page_query_param = "page_size"
     max_page_size = 100
 
+class CourseAPIView(generics.GenericAPIView):
+
+    class_serializer = CourseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request):
+        #checks to see if the user is a teacher or the student of the course
+        query =Q(teacher = request.user.id) | Q(student = request.user.id)
+        queryset = Course.objects,filter(query)
+        serializer = self.serializer_class(queryset , many=True)
+        return Response(serializer.data)
