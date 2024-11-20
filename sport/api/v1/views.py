@@ -70,3 +70,21 @@ class UpdateDietAPIView(generics.GenericAPIView):
         serializer.save()
         return Response({"message":"Diet updated successfully."})
     
+class PlanAPIView(generics.GenericAPIView):
+    
+    class_serializer = PlanSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = ListPagination
+    filter_backends = (DjangoFilterBackend)
+    filterset_class = PlanFilter
+
+    def get_queryset(self):
+        query = Q(course__teacher = self.request.user.id) | Q(course__student = self.request.user.id)
+        queryset = Plan.objects.filter(query)
+        return queryset
+    
+    def post(self, request):
+        serializer = CreatePlanSerializer(data = request.data , context = {"request":request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message":"New Exercise Plan has been created successfully."})
