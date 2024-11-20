@@ -12,3 +12,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import PlanFilter, DietFilter 
 User = get_user_model()
 
+class ListPagination(PageNumberPagination):
+    page_size = 10
+    page_query_param = "page_size"
+    max_page_size = 100
+
