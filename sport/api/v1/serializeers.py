@@ -31,6 +31,12 @@ class UpdateDietSerializer(serializers.ModelSerializer):
         fields = ["start_date","end_date","description"]
 
     def validate(self, attrs):
-        if self.isinstance.course.teacher != self.context["request"].user:
+        if self.instance.course.teacher != self.context["request"].user:
             raise serializers.ValidationError({"detail":"you are not the teacher of the course to edit this diet."})
         return super().validate(attrs)
+    
+class PlanSerializer(serializers.ModelSerializer):
+    class meta:
+        fields = "__all__"
+
+        
