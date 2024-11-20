@@ -1,4 +1,3 @@
-from typing import Any
 from django.db import models
 
 # Create your models here.
@@ -18,7 +17,7 @@ class UserManager(BaseUserManager):
         email = extra_fields.get("email")
         if email:
             email = self.normalize_email(extra_fields.get("email"))
-        user = self.model(phone_number,**extra_fields)
+        user = self.model(phone_number=phone_number,**extra_fields)
         user.set_password(password)
         user.save()
         return user
@@ -50,9 +49,11 @@ class User(AbstractBaseUser,PermissionsMixin):
     USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = []
 
-    created_data = models.DateTimeField(auto_now_add=True)
+    created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     objects = UserManager()
     def __str__(self):
         return self.phone_number
+    
+    
