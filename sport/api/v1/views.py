@@ -88,3 +88,22 @@ class PlanAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"New Exercise Plan has been created successfully."})
+    
+
+class UpdatePlanAPIView(generics.GenericAPIView):
+
+    class_serializer = UpdatePlanSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        queryset = Plan.objects.filter(course__teacher = self.request.user)
+        return queryset
+    
+    def put(self , request , id):
+        Plan = self.get_object()
+        serializer = self.get_serializer(instance = Plan , data= request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message":"Plan Exercise updated successfully."})
+    
