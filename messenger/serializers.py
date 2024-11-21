@@ -19,3 +19,17 @@ class CreateConversationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'detail':'sender and receiver must have a mutual course'})
 
         return attrs
+    
+
+class ConversationSerializer(serializers.ModelSerializer):
+    sender = UserAPIViewSerializer()
+    receiver = UserAPIViewSerializer()
+    class Meta: 
+        model = Conversation
+        fields = '__all__'
+
+class ConversationMessageSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = ConversationMessage
+        fields = '__all__'
+
