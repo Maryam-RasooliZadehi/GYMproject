@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sport',
     'account',
-    #'messenger',
+    'messenger',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
