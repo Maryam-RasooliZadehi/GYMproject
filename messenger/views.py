@@ -4,9 +4,9 @@ from .models import Conversation, ConversationMessage
 from django.contrib.auth import get_user_model
 from rest_framework import generics ,permissions
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ConversationSerializer, CreateConversationSerializer
+from .serializers import ConversationSerializer, CreateConversationSerializer , ConversationDetailSerializer
 from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiExample , OpenApiParameter
 from django.db.models import Exists, OuterRef, Q, Subquery
 
 User = get_user_model()
@@ -74,3 +74,23 @@ class ConversationAPIView(generics.ListAPIView):
         conversation.conversationmessage_set.create(**conversation_message_data)
         return Response({"detail": "conversation created successfully!"},status=status.HTTP_201_CREATED)
 
+class ConversationDetailAPIView(generics.RetrieveAPIView):
+
+    permission_classes =[permissions.IsAuthenticated]
+    serializer_class = ConversationDetailSerializer
+    lookup_field = 'id' 
+
+    def get_queryset(self):
+        queryset = Conversation.objects.filter(Q(sender= self.request.user.id) | Q(receiver= self.request.user.id))
+        return queryset
+    
+
+    @extend_schema(
+        description="Get a specific message paginated details with it's id and see messages of it",
+        parameters=[
+            OpenApiParameter(name='page', type=int, description='Page number', required=False),
+            OpenApiParameter(name='page_size', type=int, description='Items per page', required=False),
+        ]
+    )
+    def get(self,*args,**kwargs):
+        return super().get(*args,**kwargs)
