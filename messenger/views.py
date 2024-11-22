@@ -4,7 +4,7 @@ from .models import Conversation, ConversationMessage
 from django.contrib.auth import get_user_model
 from rest_framework import generics ,permissions
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ConversationSerializer, CreateConversationSerializer , ConversationDetailSerializer
+from .serializers import ConversationSerializer, CreateConversationSerializer , ConversationDetailSerializer , AddMessageSerializer
 from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiExample , OpenApiParameter
 from django.db.models import Exists, OuterRef, Q, Subquery
@@ -94,3 +94,12 @@ class ConversationDetailAPIView(generics.RetrieveAPIView):
     )
     def get(self,*args,**kwargs):
         return super().get(*args,**kwargs)
+    
+    def post(self,request,id):
+        request.data["user"]=request.user.id
+        request.data["conversation"]=id
+        serializer = AddMessageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        ConversationMessage.objects.create(**serializer.validated_data)
+
+        return Response({"error": False, "detail": "sent!"},status=status.HTTP_201_CREATED)
